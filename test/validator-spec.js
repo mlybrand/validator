@@ -1,28 +1,25 @@
 var chai = require("chai"),
     expect = chai.expect,
+    sinon = require('sinon'),
     factoryWithConfiguration = require('../lib/factory');
 
 describe('A Validator', function() {
     var validator, configuration;
     context('using the default validation rules:', function() {
         beforeEach(function() {
-            configuration = function() {
-                configuration.callCount++;
-                configuration.args = Array.prototype.slice.call(arguments);
-                return [
+            configuration = sinon.stub();
+            configuration.returns([
                     {type: 'nonPositive'},
                     {type: 'nonDivisible', options: { divisor: 3, error: 'error.three'}},
                     {type: 'nonDivisible', options: { divisor: 5, error: 'error.five'}}
-                ];
-            };
-            configuration.callCount = 0;
+            ]);
             var newValidator = factoryWithConfiguration(configuration);
             validator = newValidator('default');
         });
 
         it('will access the configuration to get the validation rules', function() {
             expect(configuration.callCount).to.be.equal(1);
-            expect(configuration.args).to.be.deep.equal(['default']);
+            expect(configuration.calledWithExactly('default')).to.be.ok;
         });
 
         it('will return no errors for valid numbers', function() {
@@ -59,22 +56,18 @@ describe('A Validator', function() {
 
     context('using the alternative validation rules:', function() {
         beforeEach(function() {
-            configuration = function() {
-                configuration.callCount++;
-                configuration.args = Array.prototype.slice.call(arguments);
-                return [
+            configuration = sinon.stub();
+            configuration.returns([
                     {type: 'nonPositive'},
                     {type: 'nonDivisible', options: { divisor: 11, error: 'error.eleven'}}
-                ];
-            };
-            configuration.callCount = 0;
+            ]);
             var newValidator = factoryWithConfiguration(configuration);
             validator = newValidator('alternative');
         });
 
         it('will access the configuration to get the validation rules', function() {
             expect(configuration.callCount).to.be.equal(1);
-            expect(configuration.args).to.be.deep.equal(['alternative']);
+            expect(configuration.calledWithExactly('alternative')).to.be.ok;
         });
     });
 });
