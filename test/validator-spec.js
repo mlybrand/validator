@@ -3,6 +3,8 @@ var chai = require("chai"),
     sinon = require('sinon'),
     factoryWithConfiguration = require('../lib/factory');
 
+chai.use(require('sinon-chai'));
+
 describe('A Validator', function() {
     var validator, configuration;
     context('using the default validation rules:', function() {
@@ -18,8 +20,8 @@ describe('A Validator', function() {
         });
 
         it('will access the configuration to get the validation rules', function() {
-            expect(configuration.callCount).to.be.equal(1);
-            expect(configuration.calledWithExactly('default')).to.be.ok;
+            expect(configuration).to.have.been.calledOnce;
+            expect(configuration).to.have.been.calledWithExactly('default');
         });
 
         it('will return no errors for valid numbers', function() {
@@ -66,8 +68,8 @@ describe('A Validator', function() {
         });
 
         it('will access the configuration to get the validation rules', function() {
-            expect(configuration.callCount).to.be.equal(1);
-            expect(configuration.calledWithExactly('alternative')).to.be.ok;
+            expect(configuration).to.have.been.calledOnce;
+            expect(configuration).to.have.been.calledWithExactly('alternative');
         });
     });
 });
